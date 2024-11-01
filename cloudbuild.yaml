@@ -1,12 +1,12 @@
 steps:
   # Step 1: Checkout the code from GitHub
   - name: 'gcr.io/cloud-builders/git'
-    args: ['clone', 'https://github.com/zeshansaid/MagicAi']
+    args: ['clone', 'https://github.com/zeshansaid/MagicCloudBuild']
   
   # Step 2: Change directory to the repository
   - name: 'gcr.io/cloud-builders/docker'
   # your-repo-directory
-    dir: 'MagicAi'
+    dir: 'MagicCloudBuild'
     args: [
           'build',
           '-t',
