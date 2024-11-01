@@ -1,0 +1,50 @@
+steps:
+  # Step 1: Checkout the code from GitHub
+  - name: 'gcr.io/cloud-builders/git'
+    args: ['clone', 'https://github.com/zeshansaid/MagicAi']
+  
+  # Step 2: Change directory to the repository
+  - name: 'gcr.io/cloud-builders/docker'
+  # your-repo-directory
+    dir: 'MagicAi'
+    args: [
+          'build',
+          '-t',
+          'gcr.io/stone-composite-436518-s3/magic-ai:${SHORT_SHA}',
+          '-t',
+          'gcr.io/stone-composite-436518-s3/magic-ai:latest',
+          '--cache-from',
+          'gcr.io/stone-composite-436518-s3/magic-ai:latest',
+          '.'
+          ]
+  
+  # Step 3: Push the Docker image to Google Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    dir: 'magic-ai'
+    args: ['push', 'gcr.io/stone-composite-436518-s3/magic-ai']
+
+  
+  
+  # Step 4: Deploy the Docker image to Google Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    args:
+      - 'gcloud'
+      - 'run'
+      - 'deploy'
+      - 'magic-ai'
+      - '--image'
+      - 'gcr.io/stone-composite-436518-s3/magic-ai'
+      - '--platform'
+      - 'managed'
+      - '--region'
+      - 'us-central1'
+      - '--allow-unauthenticated'
+      - '--quiet'
+    timeout: 3600s
+ 
+images:
+  - gcr.io/stone-composite-436518-s3/magic-ai:${SHORT_SHA}
+  - gcr.io/stone-composite-436518-s3/magic-ai:latest
+timeout: '3600s'  # Adjust timeout as necessary
+options:
+  logging: CLOUD_LOGGING_ONLY
